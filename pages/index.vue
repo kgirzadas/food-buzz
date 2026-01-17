@@ -44,11 +44,40 @@
           </div>
         </UCard>
 
+        <div class="grid md:grid-cols-3 gap-4 mb-8">
+          <UCard class="text-center hover:shadow-lg transition-shadow cursor-pointer" @click="navigateTo('/food')">
+            <div class="text-4xl mb-3">🍽️</div>
+            <h3 class="font-semibold text-lg mb-2">Pridėti Maistą</h3>
+            <p class="text-sm text-gray-600">Užregistruokite suvalgytus produktus</p>
+            <UButton color="primary" class="mt-4" block>
+              Pradėti
+            </UButton>
+          </UCard>
+
+          <UCard class="text-center hover:shadow-lg transition-shadow cursor-pointer" @click="navigateTo('/symptoms')">
+            <div class="text-4xl mb-3">🩺</div>
+            <h3 class="font-semibold text-lg mb-2">Pridėti Simptomą</h3>
+            <p class="text-sm text-gray-600">Fiksuokite nepageidaujamus simptomus</p>
+            <UButton color="primary" class="mt-4" block>
+              Pradėti
+            </UButton>
+          </UCard>
+
+          <UCard class="text-center hover:shadow-lg transition-shadow cursor-pointer" @click="navigateTo('/diary')">
+            <div class="text-4xl mb-3">📖</div>
+            <h3 class="font-semibold text-lg mb-2">Peržiūrėti Dienoraštį</h3>
+            <p class="text-sm text-gray-600">Analizuokite savo įrašus</p>
+            <UButton color="primary" class="mt-4" block>
+              Atidaryti
+            </UButton>
+          </UCard>
+        </div>
+
         <div class="text-center">
           <UButton size="xl" color="primary" @click="installPWA" v-if="showInstallButton">
-            Įdiegti Aplikaciją
+            📱 Įdiegti Aplikaciją
           </UButton>
-          <p class="text-sm text-gray-500 mt-4">
+          <p v-if="showInstallButton" class="text-sm text-gray-500 mt-4">
             Greičiau pradėkite – įdiekite aplikaciją į savo įrenginį!
           </p>
         </div>
@@ -58,10 +87,14 @@
 </template>
 
 <script setup lang="ts">
+const { loadData } = useFoodDiary()
+
 const showInstallButton = ref(false)
 let deferredPrompt: any = null
 
 onMounted(() => {
+  loadData()
+
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault()
     deferredPrompt = e
