@@ -143,8 +143,24 @@ const symptomTypes = [
 const today = computed(() => new Date().toISOString().split('T')[0])
 const currentTime = computed(() => new Date().toTimeString().slice(0, 5))
 
+// Smart default date: if it's between midnight and 6 AM, use yesterday's date
+// (because it's usually a continuation of yesterday's meals/symptoms)
+const getSmartDefaultDate = () => {
+  const now = new Date()
+  const hours = now.getHours()
+
+  // If it's between 0:00 and 5:59 AM, use yesterday
+  if (hours >= 0 && hours < 6) {
+    const yesterday = new Date(now)
+    yesterday.setDate(yesterday.getDate() - 1)
+    return yesterday.toISOString().split('T')[0]
+  }
+
+  return now.toISOString().split('T')[0]
+}
+
 const form = ref({
-  date: today.value,
+  date: getSmartDefaultDate(),
   time: currentTime.value,
   type: 'putimas' as SymptomType,
   severity: 3 as 1 | 2 | 3 | 4 | 5,
@@ -199,7 +215,7 @@ const submitForm = () => {
 
 const resetForm = () => {
   form.value = {
-    date: today.value,
+    date: getSmartDefaultDate(),
     time: currentTime.value,
     type: 'putimas',
     severity: 3,
