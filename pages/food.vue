@@ -24,19 +24,29 @@
             </UFormGroup>
 
             <UFormGroup label="Maisto pavadinimas" required>
-              <UInputMenu
-                v-model="form.name"
-                :options="foodNameSuggestions"
-                placeholder="pvz., Grietinėlės sūris"
-                :search-attributes="['name']"
-                option-attribute="name"
-                :popper="{ placement: 'bottom-start' }"
-              >
-                <template #option="{ option }">
-                  <span>{{ option.name }}</span>
-                  <span class="text-xs text-gray-500 ml-2">({{ option.count }}×)</span>
-                </template>
-              </UInputMenu>
+              <div class="relative">
+                <UInput
+                  v-model="form.name"
+                  placeholder="pvz., Grietinėlės sūris"
+                  @focus="showSuggestions = true"
+                  @blur="hideSuggestions"
+                />
+                <!-- Suggestions dropdown -->
+                <div
+                  v-if="showSuggestions && filteredSuggestions.length > 0"
+                  class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                >
+                  <div
+                    v-for="suggestion in filteredSuggestions"
+                    :key="suggestion.name"
+                    @mousedown.prevent="selectSuggestion(suggestion.name)"
+                    class="px-4 py-2 hover:bg-gray-50 cursor-pointer flex justify-between items-center"
+                  >
+                    <span class="text-gray-900">{{ suggestion.name }}</span>
+                    <span class="text-xs text-gray-500">{{ suggestion.count }}×</span>
+                  </div>
+                </div>
+              </div>
             </UFormGroup>
 
             <UFormGroup label="Kiekis">
@@ -158,6 +168,9 @@ const { addFoodEntry, updateFoodEntry, deleteFoodEntry, getRecentFoodEntries, ge
 
 const editingId = ref<string | null>(null)
 
+// Autocomplete state
+const showSuggestions = ref(false)
+
 // Quick add state
 const quickAdd = ref({
   date: '',
@@ -220,6 +233,30 @@ const recentEntries = computed(() => {
 const foodNameSuggestions = computed(() => {
   return getUniqueFoodNames()
 })
+
+// Filtered suggestions based on current input
+const filteredSuggestions = computed(() => {
+  if (!form.value.name) {
+    return foodNameSuggestions.value.slice(0, 10)
+  }
+  const query = form.value.name.toLowerCase()
+  return foodNameSuggestions.value
+    .filter(s => s.name.toLowerCase().includes(query))
+    .slice(0, 10)
+})
+
+// Select a suggestion from dropdown
+const selectSuggestion = (name: string) => {
+  form.value.name = name
+  showSuggestions.value = false
+}
+
+// Hide suggestions with small delay to allow click
+const hideSuggestions = () => {
+  setTimeout(() => {
+    showSuggestions.value = false
+  }, 200)
+}
 
 // Most common foods for quick add
 const mostCommonFoods = computed(() => {
