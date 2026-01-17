@@ -83,13 +83,23 @@
 <script setup lang="ts">
 const { addFoodEntry, deleteFoodEntry, getRecentFoodEntries, loadData } = useFoodDiary()
 
-// Get today's date in YYYY-MM-DD format
-const today = computed(() => new Date().toISOString().split('T')[0])
+// Helper to get local date in YYYY-MM-DD format (not UTC!)
+const getLocalDateString = (date: Date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+// Get today's date in YYYY-MM-DD format (local time)
+const today = computed(() => getLocalDateString(new Date()))
 
 // Get current time in HH:MM format
 const currentTime = computed(() => {
   const now = new Date()
-  return now.toTimeString().slice(0, 5)
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  return `${hours}:${minutes}`
 })
 
 // Smart default date: if it's between midnight and 6 AM, use yesterday's date
@@ -102,10 +112,10 @@ const getSmartDefaultDate = () => {
   if (hours >= 0 && hours < 6) {
     const yesterday = new Date(now)
     yesterday.setDate(yesterday.getDate() - 1)
-    return yesterday.toISOString().split('T')[0]
+    return getLocalDateString(yesterday)
   }
 
-  return now.toISOString().split('T')[0]
+  return getLocalDateString(now)
 }
 
 const form = ref({

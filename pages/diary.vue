@@ -201,6 +201,14 @@ const symptomCount = computed(() => {
   return filteredEntries.value.filter(e => e.type === 'symptom').length
 })
 
+// Helper to get local date in YYYY-MM-DD format (not UTC!)
+const getLocalDateString = (date: Date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 const formatDate = (dateStr: string) => {
   const date = new Date(dateStr + 'T12:00:00')
   const today = new Date()
@@ -208,8 +216,8 @@ const formatDate = (dateStr: string) => {
   yesterday.setDate(yesterday.getDate() - 1)
 
   const dateOnly = dateStr
-  const todayStr = today.toISOString().split('T')[0]
-  const yesterdayStr = yesterday.toISOString().split('T')[0]
+  const todayStr = getLocalDateString(today)
+  const yesterdayStr = getLocalDateString(yesterday)
 
   if (dateOnly === todayStr) return 'Šiandien'
   if (dateOnly === yesterdayStr) return 'Vakar'
