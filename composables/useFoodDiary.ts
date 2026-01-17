@@ -97,6 +97,35 @@ export const useFoodDiary = () => {
     return foodEntries.value.filter(e => e.date >= yesterdayStr)
   }
 
+  // Get unique food names with frequency count
+  const getUniqueFoodNames = () => {
+    const foodCounts: Record<string, { name: string; count: number; lastUsed: string }> = {}
+
+    foodEntries.value.forEach(entry => {
+      const key = entry.name.toLowerCase()
+      if (!foodCounts[key]) {
+        foodCounts[key] = {
+          name: entry.name,
+          count: 0,
+          lastUsed: entry.date
+        }
+      }
+      foodCounts[key].count++
+      // Keep the most recent date
+      if (entry.date > foodCounts[key].lastUsed) {
+        foodCounts[key].lastUsed = entry.date
+      }
+    })
+
+    // Convert to array and sort by frequency (most used first)
+    return Object.values(foodCounts).sort((a, b) => b.count - a.count)
+  }
+
+  // Get most common foods (top 10)
+  const getMostCommonFoods = () => {
+    return getUniqueFoodNames().slice(0, 10)
+  }
+
   return {
     foodEntries,
     symptomEntries,
@@ -109,6 +138,8 @@ export const useFoodDiary = () => {
     deleteFoodEntry,
     deleteSymptomEntry,
     getEntriesByDateRange,
-    getRecentFoodEntries
+    getRecentFoodEntries,
+    getUniqueFoodNames,
+    getMostCommonFoods
   }
 }

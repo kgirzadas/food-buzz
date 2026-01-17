@@ -24,7 +24,19 @@
             </UFormGroup>
 
             <UFormGroup label="Maisto pavadinimas" required>
-              <UInput v-model="form.name" placeholder="pvz., Grietinėlės sūris" />
+              <UInputMenu
+                v-model="form.name"
+                :options="foodNameSuggestions"
+                placeholder="pvz., Grietinėlės sūris"
+                :search-attributes="['name']"
+                option-attribute="name"
+                :popper="{ placement: 'bottom-start' }"
+              >
+                <template #option="{ option }">
+                  <span>{{ option.name }}</span>
+                  <span class="text-xs text-gray-500 ml-2">({{ option.count }}×)</span>
+                </template>
+              </UInputMenu>
             </UFormGroup>
 
             <UFormGroup label="Kiekis">
@@ -52,6 +64,57 @@
               </button>
             </div>
           </form>
+        </div>
+
+        <!-- Quick Add Section -->
+        <div v-if="mostCommonFoods.length > 0 && !editingId" class="bg-white rounded-3xl shadow-2xl p-8 mb-8">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="text-4xl">⚡</div>
+            <h2 class="text-2xl font-bold text-gray-900">Greitas Pridėjimas</h2>
+          </div>
+
+          <p class="text-gray-600 mb-4 text-sm">Pasirinkite vieną ar kelis dažnai valgomus produktus ir pridėkite juos vienu metu</p>
+
+          <div class="space-y-4">
+            <div class="flex flex-wrap gap-4 mb-4">
+              <UFormGroup label="Data" class="flex-1 min-w-[200px]">
+                <UInput v-model="quickAdd.date" type="date" :max="today" />
+              </UFormGroup>
+              <UFormGroup label="Laikas" class="flex-1 min-w-[200px]">
+                <UInput v-model="quickAdd.time" type="time" />
+              </UFormGroup>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <label
+                v-for="food in mostCommonFoods"
+                :key="food.name"
+                class="flex items-center gap-2 p-3 border-2 rounded-lg cursor-pointer transition-all"
+                :class="quickAdd.selectedFoods.includes(food.name)
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'"
+              >
+                <input
+                  type="checkbox"
+                  :value="food.name"
+                  v-model="quickAdd.selectedFoods"
+                  class="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                />
+                <div class="flex-1">
+                  <span class="text-sm font-medium text-gray-900">{{ food.name }}</span>
+                  <span class="text-xs text-gray-500 block">{{ food.count }}× anksčiau</span>
+                </div>
+              </label>
+            </div>
+
+            <button
+              @click="addQuickFoods"
+              :disabled="quickAdd.selectedFoods.length === 0"
+              class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              ✓ Pridėti {{ quickAdd.selectedFoods.length > 0 ? `(${quickAdd.selectedFoods.length})` : '' }}
+            </button>
+          </div>
         </div>
 
         <div v-if="recentEntries.length > 0" class="mt-8">
@@ -91,9 +154,16 @@
 <script setup lang="ts">
 import type { FoodEntry } from '~/types'
 
-const { addFoodEntry, updateFoodEntry, deleteFoodEntry, getRecentFoodEntries, loadData } = useFoodDiary()
+const { addFoodEntry, updateFoodEntry, deleteFoodEntry, getRecentFoodEntries, getUniqueFoodNames, getMostCommonFoods, loadData } = useFoodDiary()
 
 const editingId = ref<string | null>(null)
+
+// Quick add state
+const quickAdd = ref({
+  date: '',
+  time: '',
+  selectedFoods: [] as string[]
+})
 
 // Helper to get local date in YYYY-MM-DD format (not UTC!)
 const getLocalDateString = (date: Date) => {
@@ -144,6 +214,16 @@ const recentEntries = computed(() => {
     const dateTimeB = `${b.date} ${b.time}`
     return dateTimeB.localeCompare(dateTimeA)
   }).slice(0, 10)
+})
+
+// Food name suggestions for autocomplete
+const foodNameSuggestions = computed(() => {
+  return getUniqueFoodNames()
+})
+
+// Most common foods for quick add
+const mostCommonFoods = computed(() => {
+  return getMostCommonFoods()
 })
 
 const isFormValid = computed(() => {
@@ -216,8 +296,32 @@ const deleteEntry = (id: string) => {
   }
 }
 
+// Quick add multiple foods
+const addQuickFoods = () => {
+  if (quickAdd.value.selectedFoods.length === 0) return
+
+  quickAdd.value.selectedFoods.forEach(foodName => {
+    addFoodEntry({
+      date: quickAdd.value.date,
+      time: quickAdd.value.time,
+      name: foodName,
+      quantity: '',
+      notes: ''
+    })
+  })
+
+  alert(`Pridėta ${quickAdd.value.selectedFoods.length} produktų!`)
+
+  // Reset selection but keep date/time
+  quickAdd.value.selectedFoods = []
+}
+
 // Load data on mount
 onMounted(() => {
   loadData()
+
+  // Initialize quick add with smart defaults
+  quickAdd.value.date = getSmartDefaultDate()
+  quickAdd.value.time = currentTime.value
 })
 </script>
