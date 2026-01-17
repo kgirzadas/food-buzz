@@ -15,19 +15,77 @@
           </div>
 
           <div class="bg-white rounded-2xl shadow-2xl p-6">
-            <div class="flex flex-wrap gap-4">
-              <UFormGroup label="Nuo datos" class="flex-1 min-w-[200px]">
-                <UInput v-model="dateRange.start" type="date" />
+            <div class="space-y-4">
+              <UFormGroup label="🔍 Paieška (maisto pavadinimas ar pastabos)">
+                <UInput
+                  v-model="searchQuery"
+                  placeholder="pvz., Sūris, Pienas, skausmas..."
+                  icon="i-heroicons-magnifying-glass"
+                />
               </UFormGroup>
-              <UFormGroup label="Iki datos" class="flex-1 min-w-[200px]">
-                <UInput v-model="dateRange.end" type="date" />
-              </UFormGroup>
-              <div class="flex items-end">
+
+              <div class="flex flex-wrap gap-4">
+                <UFormGroup label="Nuo datos" class="flex-1 min-w-[200px]">
+                  <UInput v-model="dateRange.start" type="date" />
+                </UFormGroup>
+                <UFormGroup label="Iki datos" class="flex-1 min-w-[200px]">
+                  <UInput v-model="dateRange.end" type="date" />
+                </UFormGroup>
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                <UFormGroup label="Filtruoti pagal tipą">
+                  <div class="flex gap-2">
+                    <button
+                      @click="toggleTypeFilter('food')"
+                      :class="[
+                        'px-4 py-2 rounded-lg font-semibold transition-all',
+                        typeFilters.food
+                          ? 'bg-green-500 text-white'
+                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                      ]"
+                    >
+                      🍽️ Maistas
+                    </button>
+                    <button
+                      @click="toggleTypeFilter('symptom')"
+                      :class="[
+                        'px-4 py-2 rounded-lg font-semibold transition-all',
+                        typeFilters.symptom
+                          ? 'bg-red-500 text-white'
+                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                      ]"
+                    >
+                      🩺 Simptomai
+                    </button>
+                  </div>
+                </UFormGroup>
+
+                <UFormGroup label="Simptomų tipas" v-if="typeFilters.symptom">
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      v-for="symptom in symptomTypes"
+                      :key="symptom.value"
+                      @click="toggleSymptomFilter(symptom.value)"
+                      :class="[
+                        'px-3 py-2 rounded-lg text-sm font-semibold transition-all',
+                        symptomFilters.includes(symptom.value)
+                          ? 'bg-indigo-500 text-white'
+                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                      ]"
+                    >
+                      {{ symptom.label }}
+                    </button>
+                  </div>
+                </UFormGroup>
+              </div>
+
+              <div class="flex justify-end">
                 <button
-                  @click="resetDateRange"
+                  @click="resetFilters"
                   class="px-4 py-2 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all"
                 >
-                  Rodyti viską
+                  ✕ Išvalyti visus filtrus
                 </button>
               </div>
             </div>
@@ -140,19 +198,42 @@ const symptomTypes = [
   { label: '❓ Kita', value: 'kita' }
 ]
 
+const searchQuery = ref('')
 const dateRange = ref({
   start: '',
   end: ''
 })
+const typeFilters = ref({
+  food: true,
+  symptom: true
+})
+const symptomFilters = ref<SymptomType[]>([])
 
-const resetDateRange = () => {
+const toggleTypeFilter = (type: 'food' | 'symptom') => {
+  typeFilters.value[type] = !typeFilters.value[type]
+}
+
+const toggleSymptomFilter = (symptom: SymptomType) => {
+  const index = symptomFilters.value.indexOf(symptom)
+  if (index === -1) {
+    symptomFilters.value.push(symptom)
+  } else {
+    symptomFilters.value.splice(index, 1)
+  }
+}
+
+const resetFilters = () => {
+  searchQuery.value = ''
   dateRange.value = { start: '', end: '' }
+  typeFilters.value = { food: true, symptom: true }
+  symptomFilters.value = []
 }
 
 const filteredEntries = computed(() => {
   let food = [...foodEntries.value]
   let symptoms = [...symptomEntries.value]
 
+  // Apply date range filters
   if (dateRange.value.start) {
     food = food.filter(e => e.date >= dateRange.value.start)
     symptoms = symptoms.filter(e => e.date >= dateRange.value.start)
@@ -163,10 +244,33 @@ const filteredEntries = computed(() => {
     symptoms = symptoms.filter(e => e.date <= dateRange.value.end)
   }
 
-  const combined = [
-    ...food.map(f => ({ id: f.id, date: f.date, time: f.time, type: 'food' as const, data: f })),
-    ...symptoms.map(s => ({ id: s.id, date: s.date, time: s.time, type: 'symptom' as const, data: s }))
-  ]
+  // Apply search query filter
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase().trim()
+    food = food.filter(e =>
+      e.name.toLowerCase().includes(query) ||
+      (e.notes && e.notes.toLowerCase().includes(query)) ||
+      (e.quantity && e.quantity.toLowerCase().includes(query))
+    )
+    symptoms = symptoms.filter(e =>
+      (e.notes && e.notes.toLowerCase().includes(query)) ||
+      getSymptomLabel(e.type).toLowerCase().includes(query)
+    )
+  }
+
+  // Apply symptom type filter
+  if (symptomFilters.value.length > 0) {
+    symptoms = symptoms.filter(e => symptomFilters.value.includes(e.type))
+  }
+
+  // Combine entries based on type filters
+  const combined = []
+  if (typeFilters.value.food) {
+    combined.push(...food.map(f => ({ id: f.id, date: f.date, time: f.time, type: 'food' as const, data: f })))
+  }
+  if (typeFilters.value.symptom) {
+    combined.push(...symptoms.map(s => ({ id: s.id, date: s.date, time: s.time, type: 'symptom' as const, data: s })))
+  }
 
   return combined.sort((a, b) => {
     const dateTimeA = `${a.date} ${a.time}`

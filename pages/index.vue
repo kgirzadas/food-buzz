@@ -16,7 +16,7 @@
         </div>
 
         <!-- Main Action Cards -->
-        <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <!-- Food Card -->
           <div
             @click="navigateTo('/food')"
@@ -58,6 +58,20 @@
               Atidaryti →
             </button>
           </div>
+
+          <!-- Insights Card -->
+          <div
+            @click="navigateTo('/insights')"
+            class="group relative bg-white rounded-3xl p-8 shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 cursor-pointer transform hover:-translate-y-2"
+          >
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-bl-full opacity-20"></div>
+            <div class="text-6xl mb-4">📊</div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Analizė ir Įžvalgos</h3>
+            <p class="text-gray-600 mb-6">Raskite ryšius tarp maisto ir simptomų</p>
+            <button class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-amber-600 hover:to-orange-700 transition-all shadow-lg">
+              Peržiūrėti →
+            </button>
+          </div>
         </div>
 
         <!-- Features Section -->
@@ -65,19 +79,19 @@
           <h2 class="text-3xl font-bold text-white mb-6 text-center">Kodėl Verta Naudoti?</h2>
           <div class="grid md:grid-cols-3 gap-6">
             <div class="text-center">
-              <div class="text-5xl mb-3">📝</div>
-              <h3 class="text-xl font-semibold text-white mb-2">Paprasta Registracija</h3>
-              <p class="text-purple-100">Greitas ir intuityvus maisto bei simptomų įrašymas</p>
+              <div class="text-5xl mb-3">✏️</div>
+              <h3 class="text-xl font-semibold text-white mb-2">Redaguokite Įrašus</h3>
+              <p class="text-purple-100">Taisykite klaidas ar papildykite informaciją bet kada</p>
             </div>
             <div class="text-center">
               <div class="text-5xl mb-3">🔍</div>
-              <h3 class="text-xl font-semibold text-white mb-2">Ryšių Atpažinimas</h3>
-              <p class="text-purple-100">Susieti maisto produktus su simptomais</p>
+              <h3 class="text-xl font-semibold text-white mb-2">Išsami Paieška</h3>
+              <p class="text-purple-100">Filtruokite įrašus pagal datą, tipą ar raktažodžius</p>
             </div>
             <div class="text-center">
-              <div class="text-5xl mb-3">📊</div>
-              <h3 class="text-xl font-semibold text-white mb-2">Chronologinė Istorija</h3>
-              <p class="text-purple-100">Peržiūrėkite visus įrašus laiko juostoje</p>
+              <div class="text-5xl mb-3">🎯</div>
+              <h3 class="text-xl font-semibold text-white mb-2">Automatinė Analizė</h3>
+              <p class="text-purple-100">Aptikite ryšius tarp maisto produktų ir simptomų</p>
             </div>
           </div>
         </div>

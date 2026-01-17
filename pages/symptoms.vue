@@ -11,7 +11,7 @@
         <div class="bg-white rounded-3xl shadow-2xl p-8 mb-8">
           <div class="flex items-center gap-3 mb-6">
             <div class="text-5xl">🩺</div>
-            <h1 class="text-3xl font-bold text-gray-900">Pridėti Simptomą</h1>
+            <h1 class="text-3xl font-bold text-gray-900">{{ editingId ? 'Redaguoti Simptomą' : 'Pridėti Simptomą' }}</h1>
           </div>
 
           <form @submit.prevent="submitForm" class="space-y-4">
@@ -77,14 +77,14 @@
                 :disabled="!isFormValid"
                 class="flex-1 bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-red-600 hover:to-rose-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                ✓ Išsaugoti
+                {{ editingId ? '✓ Atnaujinti' : '✓ Išsaugoti' }}
               </button>
               <button
                 type="button"
-                @click="resetForm"
+                @click="cancelEdit"
                 class="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all"
               >
-                ✕ Išvalyti
+                {{ editingId ? '✕ Atšaukti' : '✕ Išvalyti' }}
               </button>
             </div>
           </form>
@@ -113,12 +113,20 @@
                     </ul>
                   </div>
                 </div>
-                <button
-                  @click="deleteEntry(entry.id)"
-                  class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
-                >
-                  <span class="text-xl">🗑️</span>
-                </button>
+                <div class="flex gap-2">
+                  <button
+                    @click="editEntry(entry)"
+                    class="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-2 rounded-lg transition-all"
+                  >
+                    <span class="text-xl">✏️</span>
+                  </button>
+                  <button
+                    @click="deleteEntry(entry.id)"
+                    class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
+                  >
+                    <span class="text-xl">🗑️</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -129,9 +137,11 @@
 </template>
 
 <script setup lang="ts">
-import type { SymptomType } from '~/types'
+import type { SymptomType, SymptomEntry } from '~/types'
 
-const { addSymptomEntry, deleteSymptomEntry, symptomEntries, foodEntries, getRecentFoodEntries, loadData } = useFoodDiary()
+const { addSymptomEntry, updateSymptomEntry, deleteSymptomEntry, symptomEntries, foodEntries, getRecentFoodEntries, loadData } = useFoodDiary()
+
+const editingId = ref<string | null>(null)
 
 const symptomTypes = [
   { label: '🫧 Putimas', value: 'putimas' },
@@ -210,23 +220,38 @@ const getFoodName = (foodId: string) => {
 const submitForm = () => {
   if (!isFormValid.value) return
 
-  addSymptomEntry({
-    date: form.value.date,
-    time: form.value.time,
-    type: form.value.type,
-    severity: form.value.severity,
-    notes: form.value.notes.trim(),
-    relatedFoods: form.value.relatedFoods.length > 0 ? form.value.relatedFoods : undefined
-  })
+  if (editingId.value) {
+    // Update existing entry
+    updateSymptomEntry(editingId.value, {
+      date: form.value.date,
+      time: form.value.time,
+      type: form.value.type,
+      severity: form.value.severity,
+      notes: form.value.notes.trim(),
+      relatedFoods: form.value.relatedFoods.length > 0 ? form.value.relatedFoods : undefined
+    })
+    alert('Simptomai atnaujinti!')
+    editingId.value = null
+  } else {
+    // Add new entry
+    addSymptomEntry({
+      date: form.value.date,
+      time: form.value.time,
+      type: form.value.type,
+      severity: form.value.severity,
+      notes: form.value.notes.trim(),
+      relatedFoods: form.value.relatedFoods.length > 0 ? form.value.relatedFoods : undefined
+    })
+    alert('Simptomai išsaugoti!')
+  }
 
   // Reset form but keep date/time
   form.value.notes = ''
   form.value.relatedFoods = []
-
-  alert('Simptomai išsaugoti!')
 }
 
-const resetForm = () => {
+const cancelEdit = () => {
+  editingId.value = null
   form.value = {
     date: getSmartDefaultDate(),
     time: currentTime.value,
@@ -237,9 +262,27 @@ const resetForm = () => {
   }
 }
 
+const editEntry = (entry: SymptomEntry) => {
+  editingId.value = entry.id
+  form.value = {
+    date: entry.date,
+    time: entry.time,
+    type: entry.type,
+    severity: entry.severity,
+    notes: entry.notes || '',
+    relatedFoods: entry.relatedFoods || []
+  }
+  // Scroll to top to show the form
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
 const deleteEntry = (id: string) => {
   if (confirm('Ar tikrai norite ištrinti šį įrašą?')) {
     deleteSymptomEntry(id)
+    // If we were editing this entry, cancel the edit
+    if (editingId.value === id) {
+      cancelEdit()
+    }
   }
 }
 

@@ -59,6 +59,24 @@ export const useFoodDiary = () => {
     saveData()
   }
 
+  // Update food entry
+  const updateFoodEntry = (id: string, updatedEntry: Omit<FoodEntry, 'id'>) => {
+    const index = foodEntries.value.findIndex(e => e.id === id)
+    if (index !== -1) {
+      foodEntries.value[index] = { ...updatedEntry, id }
+      saveData()
+    }
+  }
+
+  // Update symptom entry
+  const updateSymptomEntry = (id: string, updatedEntry: Omit<SymptomEntry, 'id'>) => {
+    const index = symptomEntries.value.findIndex(e => e.id === id)
+    if (index !== -1) {
+      symptomEntries.value[index] = { ...updatedEntry, id }
+      saveData()
+    }
+  }
+
   // Get entries by date range
   const getEntriesByDateRange = (startDate: string, endDate: string) => {
     return {
@@ -71,7 +89,10 @@ export const useFoodDiary = () => {
   const getRecentFoodEntries = () => {
     const yesterday = new Date()
     yesterday.setDate(yesterday.getDate() - 1)
-    const yesterdayStr = yesterday.toISOString().split('T')[0]
+    const year = yesterday.getFullYear()
+    const month = String(yesterday.getMonth() + 1).padStart(2, '0')
+    const day = String(yesterday.getDate()).padStart(2, '0')
+    const yesterdayStr = `${year}-${month}-${day}`
 
     return foodEntries.value.filter(e => e.date >= yesterdayStr)
   }
@@ -83,6 +104,8 @@ export const useFoodDiary = () => {
     saveData,
     addFoodEntry,
     addSymptomEntry,
+    updateFoodEntry,
+    updateSymptomEntry,
     deleteFoodEntry,
     deleteSymptomEntry,
     getEntriesByDateRange,
