@@ -1,17 +1,18 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
+  <div class="min-h-screen bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700">
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-2xl mx-auto">
         <div class="mb-6">
-          <NuxtLink to="/" class="text-indigo-600 hover:text-indigo-800 flex items-center gap-2">
-            ← Atgal į pradžią
+          <NuxtLink to="/" class="inline-flex items-center gap-2 text-white hover:text-purple-200 transition-colors font-semibold">
+            <span class="text-xl">←</span> Atgal į pradžią
           </NuxtLink>
         </div>
 
-        <UCard class="bg-white">
-          <template #header>
-            <h1 class="text-3xl font-bold text-gray-900">🩺 Pridėti Simptomą</h1>
-          </template>
+        <div class="bg-white rounded-3xl shadow-2xl p-8 mb-8">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="text-5xl">🩺</div>
+            <h1 class="text-3xl font-bold text-gray-900">Pridėti Simptomą</h1>
+          </div>
 
           <form @submit.prevent="submitForm" class="space-y-4">
             <UFormGroup label="Data" required>
@@ -71,20 +72,28 @@
             </div>
 
             <div class="flex gap-3 pt-4">
-              <UButton type="submit" size="lg" color="primary" :disabled="!isFormValid">
-                Išsaugoti
-              </UButton>
-              <UButton type="button" size="lg" color="gray" variant="outline" @click="resetForm">
-                Išvalyti
-              </UButton>
+              <button
+                type="submit"
+                :disabled="!isFormValid"
+                class="flex-1 bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-red-600 hover:to-rose-700 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ✓ Išsaugoti
+              </button>
+              <button
+                type="button"
+                @click="resetForm"
+                class="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all"
+              >
+                ✕ Išvalyti
+              </button>
             </div>
           </form>
-        </UCard>
+        </div>
 
         <div v-if="recentSymptoms.length > 0" class="mt-8">
-          <h2 class="text-2xl font-bold mb-4 text-gray-900">Naujausi Simptomai</h2>
+          <h2 class="text-2xl font-bold mb-4 text-white">Naujausi Simptomai</h2>
           <div class="space-y-3">
-            <UCard v-for="entry in recentSymptoms" :key="entry.id" class="bg-white">
+            <div v-for="entry in recentSymptoms" :key="entry.id" class="bg-white rounded-2xl shadow-lg p-5 hover:shadow-xl transition-shadow">
               <div class="flex justify-between items-start">
                 <div class="flex-1">
                   <div class="flex items-center gap-2">
@@ -104,15 +113,14 @@
                     </ul>
                   </div>
                 </div>
-                <UButton
-                  icon="i-heroicons-trash"
-                  color="red"
-                  variant="ghost"
-                  size="sm"
+                <button
                   @click="deleteEntry(entry.id)"
-                />
+                  class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
+                >
+                  <span class="text-xl">🗑️</span>
+                </button>
               </div>
-            </UCard>
+            </div>
           </div>
         </div>
       </div>

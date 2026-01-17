@@ -1,17 +1,20 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
+  <div class="min-h-screen bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700">
     <div class="container mx-auto px-4 py-8">
       <div class="max-w-4xl mx-auto">
         <div class="mb-6">
-          <NuxtLink to="/" class="text-indigo-600 hover:text-indigo-800 flex items-center gap-2">
-            ← Atgal į pradžią
+          <NuxtLink to="/" class="inline-flex items-center gap-2 text-white hover:text-purple-200 transition-colors font-semibold">
+            <span class="text-xl">←</span> Atgal į pradžią
           </NuxtLink>
         </div>
 
         <div class="mb-6">
-          <h1 class="text-3xl font-bold mb-4 text-gray-900">📖 Maisto Dienoraštis</h1>
+          <div class="flex items-center gap-3 mb-6">
+            <div class="text-6xl">📖</div>
+            <h1 class="text-4xl font-bold text-white drop-shadow-lg">Maisto Dienoraštis</h1>
+          </div>
 
-          <UCard class="bg-white">
+          <div class="bg-white rounded-2xl shadow-2xl p-6">
             <div class="flex flex-wrap gap-4">
               <UFormGroup label="Nuo datos" class="flex-1 min-w-[200px]">
                 <UInput v-model="dateRange.start" type="date" />
@@ -20,31 +23,38 @@
                 <UInput v-model="dateRange.end" type="date" />
               </UFormGroup>
               <div class="flex items-end">
-                <UButton @click="resetDateRange" color="gray" variant="outline">
+                <button
+                  @click="resetDateRange"
+                  class="px-4 py-2 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-all"
+                >
                   Rodyti viską
-                </UButton>
+                </button>
               </div>
             </div>
-          </UCard>
+          </div>
         </div>
 
-        <div v-if="filteredEntries.length === 0" class="text-center py-12">
-          <p class="text-gray-500 text-lg">Nėra įrašų pasirinktam laikotarpiui</p>
-          <div class="mt-4 flex gap-3 justify-center">
-            <UButton to="/food" color="primary">Pridėti maisto įrašą</UButton>
-            <UButton to="/symptoms" color="primary" variant="outline">Pridėti simptomą</UButton>
+        <div v-if="filteredEntries.length === 0" class="text-center py-16 bg-white/10 backdrop-blur-lg rounded-3xl border border-white/20">
+          <p class="text-white text-xl mb-6">Nėra įrašų pasirinktam laikotarpiui</p>
+          <div class="flex gap-4 justify-center">
+            <NuxtLink to="/food" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg">
+              Pridėti maisto įrašą
+            </NuxtLink>
+            <NuxtLink to="/symptoms" class="bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-red-600 hover:to-rose-700 transition-all shadow-lg">
+              Pridėti simptomą
+            </NuxtLink>
           </div>
         </div>
 
         <div v-else class="space-y-6">
           <div v-for="group in groupedEntries" :key="group.date">
-            <h2 class="text-xl font-semibold mb-3 text-gray-900">
+            <h2 class="text-xl font-semibold mb-3 text-white">
               {{ formatDate(group.date) }}
             </h2>
 
             <div class="space-y-3">
               <div v-for="entry in group.entries" :key="entry.id">
-                <UCard v-if="entry.type === 'food'" class="border-l-4 border-indigo-500 bg-white">
+                <div v-if="entry.type === 'food'" class="border-l-4 border-green-500 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow p-5">
                   <div class="flex gap-3">
                     <div class="text-2xl">🍽️</div>
                     <div class="flex-1">
@@ -59,19 +69,18 @@
                             {{ entry.data.notes }}
                           </p>
                         </div>
-                        <UButton
-                          icon="i-heroicons-trash"
-                          color="red"
-                          variant="ghost"
-                          size="sm"
+                        <button
                           @click="deleteFoodEntry(entry.id)"
-                        />
+                          class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
+                        >
+                          <span class="text-xl">🗑️</span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                </UCard>
+                </div>
 
-                <UCard v-else class="border-l-4 border-red-500 bg-white">
+                <div v-else class="border-l-4 border-red-500 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow p-5">
                   <div class="flex gap-3">
                     <div class="text-2xl">🩺</div>
                     <div class="flex-1">
@@ -96,24 +105,23 @@
                             </ul>
                           </div>
                         </div>
-                        <UButton
-                          icon="i-heroicons-trash"
-                          color="red"
-                          variant="ghost"
-                          size="sm"
+                        <button
                           @click="deleteSymptomEntry(entry.id)"
-                        />
+                          class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
+                        >
+                          <span class="text-xl">🗑️</span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                </UCard>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div v-if="filteredEntries.length > 0" class="mt-8 text-center text-sm text-gray-500">
-          Iš viso: {{ foodCount }} maisto įrašų, {{ symptomCount }} simptomų
+        <div v-if="filteredEntries.length > 0" class="mt-8 text-center bg-white/10 backdrop-blur-lg rounded-2xl py-4 border border-white/20">
+          <p class="text-white font-medium">Iš viso: {{ foodCount }} maisto įrašų, {{ symptomCount }} simptomų</p>
         </div>
       </div>
     </div>
