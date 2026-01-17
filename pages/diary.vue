@@ -9,9 +9,9 @@
         </div>
 
         <div class="mb-6">
-          <h1 class="text-3xl font-bold mb-4">📖 Maisto Dienoraštis</h1>
+          <h1 class="text-3xl font-bold mb-4 text-gray-900">📖 Maisto Dienoraštis</h1>
 
-          <UCard>
+          <UCard class="bg-white">
             <div class="flex flex-wrap gap-4">
               <UFormGroup label="Nuo datos" class="flex-1 min-w-[200px]">
                 <UInput v-model="dateRange.start" type="date" />
@@ -38,24 +38,24 @@
 
         <div v-else class="space-y-6">
           <div v-for="group in groupedEntries" :key="group.date">
-            <h2 class="text-xl font-semibold mb-3 text-gray-800">
+            <h2 class="text-xl font-semibold mb-3 text-gray-900">
               {{ formatDate(group.date) }}
             </h2>
 
             <div class="space-y-3">
               <div v-for="entry in group.entries" :key="entry.id">
-                <UCard v-if="entry.type === 'food'" class="border-l-4 border-indigo-500">
+                <UCard v-if="entry.type === 'food'" class="border-l-4 border-indigo-500 bg-white">
                   <div class="flex gap-3">
                     <div class="text-2xl">🍽️</div>
                     <div class="flex-1">
                       <div class="flex justify-between items-start">
                         <div>
-                          <h3 class="font-semibold">{{ entry.data.name }}</h3>
-                          <p class="text-sm text-gray-600">{{ entry.data.time }}</p>
-                          <p v-if="entry.data.quantity" class="text-sm text-gray-700 mt-1">
+                          <h3 class="font-semibold text-gray-900">{{ entry.data.name }}</h3>
+                          <p class="text-sm text-gray-700">{{ entry.data.time }}</p>
+                          <p v-if="entry.data.quantity" class="text-sm text-gray-800 mt-1">
                             {{ entry.data.quantity }}
                           </p>
-                          <p v-if="entry.data.notes" class="text-sm text-gray-600 mt-2">
+                          <p v-if="entry.data.notes" class="text-sm text-gray-700 mt-2">
                             {{ entry.data.notes }}
                           </p>
                         </div>
@@ -71,25 +71,25 @@
                   </div>
                 </UCard>
 
-                <UCard v-else class="border-l-4 border-red-500">
+                <UCard v-else class="border-l-4 border-red-500 bg-white">
                   <div class="flex gap-3">
                     <div class="text-2xl">🩺</div>
                     <div class="flex-1">
                       <div class="flex justify-between items-start">
                         <div>
                           <div class="flex items-center gap-2">
-                            <h3 class="font-semibold">{{ getSymptomLabel(entry.data.type) }}</h3>
-                            <span class="text-sm px-2 py-1 bg-red-100 text-red-800 rounded">
+                            <h3 class="font-semibold text-gray-900">{{ getSymptomLabel(entry.data.type) }}</h3>
+                            <span class="text-sm px-2 py-1 bg-red-100 text-red-900 rounded font-medium">
                               {{ entry.data.severity }}/5
                             </span>
                           </div>
-                          <p class="text-sm text-gray-600">{{ entry.data.time }}</p>
-                          <p v-if="entry.data.notes" class="text-sm text-gray-600 mt-2">
+                          <p class="text-sm text-gray-700">{{ entry.data.time }}</p>
+                          <p v-if="entry.data.notes" class="text-sm text-gray-700 mt-2">
                             {{ entry.data.notes }}
                           </p>
                           <div v-if="entry.data.relatedFoods && entry.data.relatedFoods.length > 0" class="mt-2">
-                            <p class="text-xs text-gray-500">Galimi ryšiai su:</p>
-                            <ul class="text-sm text-gray-600 list-disc list-inside">
+                            <p class="text-xs text-gray-700 font-medium">Galimi ryšiai su:</p>
+                            <ul class="text-sm text-gray-800 list-disc list-inside">
                               <li v-for="foodId in entry.data.relatedFoods" :key="foodId">
                                 {{ getFoodName(foodId) }}
                               </li>

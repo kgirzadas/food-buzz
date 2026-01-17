@@ -8,9 +8,9 @@
           </NuxtLink>
         </div>
 
-        <UCard>
+        <UCard class="bg-white">
           <template #header>
-            <h1 class="text-3xl font-bold">🩺 Pridėti Simptomą</h1>
+            <h1 class="text-3xl font-bold text-gray-900">🩺 Pridėti Simptomą</h1>
           </template>
 
           <form @submit.prevent="submitForm" class="space-y-4">
@@ -82,22 +82,22 @@
         </UCard>
 
         <div v-if="recentSymptoms.length > 0" class="mt-8">
-          <h2 class="text-2xl font-bold mb-4">Naujausi Simptomai</h2>
+          <h2 class="text-2xl font-bold mb-4 text-gray-900">Naujausi Simptomai</h2>
           <div class="space-y-3">
-            <UCard v-for="entry in recentSymptoms" :key="entry.id">
+            <UCard v-for="entry in recentSymptoms" :key="entry.id" class="bg-white">
               <div class="flex justify-between items-start">
                 <div class="flex-1">
                   <div class="flex items-center gap-2">
-                    <h3 class="font-semibold text-lg">{{ getSymptomLabel(entry.type) }}</h3>
-                    <span class="text-sm px-2 py-1 bg-indigo-100 text-indigo-800 rounded">
+                    <h3 class="font-semibold text-lg text-gray-900">{{ getSymptomLabel(entry.type) }}</h3>
+                    <span class="text-sm px-2 py-1 bg-indigo-100 text-indigo-900 rounded font-medium">
                       {{ entry.severity }}/5
                     </span>
                   </div>
-                  <p class="text-sm text-gray-600">{{ entry.date }} {{ entry.time }}</p>
-                  <p v-if="entry.notes" class="text-sm text-gray-600 mt-2">{{ entry.notes }}</p>
+                  <p class="text-sm text-gray-700">{{ entry.date }} {{ entry.time }}</p>
+                  <p v-if="entry.notes" class="text-sm text-gray-700 mt-2">{{ entry.notes }}</p>
                   <div v-if="entry.relatedFoods && entry.relatedFoods.length > 0" class="mt-2">
-                    <p class="text-xs text-gray-500">Susiję produktai:</p>
-                    <ul class="text-sm text-gray-600 list-disc list-inside">
+                    <p class="text-xs text-gray-700 font-medium">Susiję produktai:</p>
+                    <ul class="text-sm text-gray-800 list-disc list-inside">
                       <li v-for="foodId in entry.relatedFoods" :key="foodId">
                         {{ getFoodName(foodId) }}
                       </li>

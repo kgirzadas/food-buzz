@@ -23,50 +23,50 @@
             </p>
 
             <div class="grid md:grid-cols-3 gap-4 mt-6">
-              <div class="p-4 bg-indigo-50 rounded-lg">
+              <div class="p-4 bg-indigo-100 rounded-lg border border-indigo-200">
                 <div class="text-3xl mb-2">📝</div>
-                <h3 class="font-semibold mb-1">Registruokite</h3>
-                <p class="text-sm text-gray-600">Fiksuokite suvalgytus produktus ir jų kiekius</p>
+                <h3 class="font-semibold mb-1 text-gray-900">Registruokite</h3>
+                <p class="text-sm text-gray-800">Fiksuokite suvalgytus produktus ir jų kiekius</p>
               </div>
 
-              <div class="p-4 bg-purple-50 rounded-lg">
+              <div class="p-4 bg-purple-100 rounded-lg border border-purple-200">
                 <div class="text-3xl mb-2">🔍</div>
-                <h3 class="font-semibold mb-1">Stebėkite</h3>
-                <p class="text-sm text-gray-600">Sekite simptomus: putimą, skausmą, pykinimą</p>
+                <h3 class="font-semibold mb-1 text-gray-900">Stebėkite</h3>
+                <p class="text-sm text-gray-800">Sekite simptomus: putimą, skausmą, pykinimą</p>
               </div>
 
-              <div class="p-4 bg-pink-50 rounded-lg">
+              <div class="p-4 bg-pink-100 rounded-lg border border-pink-200">
                 <div class="text-3xl mb-2">📊</div>
-                <h3 class="font-semibold mb-1">Analizuokite</h3>
-                <p class="text-sm text-gray-600">Atpažinkite ryšius tarp maisto ir simptomų</p>
+                <h3 class="font-semibold mb-1 text-gray-900">Analizuokite</h3>
+                <p class="text-sm text-gray-800">Atpažinkite ryšius tarp maisto ir simptomų</p>
               </div>
             </div>
           </div>
         </UCard>
 
         <div class="grid md:grid-cols-3 gap-4 mb-8">
-          <UCard class="text-center hover:shadow-lg transition-shadow cursor-pointer" @click="navigateTo('/food')">
+          <UCard class="text-center hover:shadow-lg transition-shadow cursor-pointer bg-white" @click="navigateTo('/food')">
             <div class="text-4xl mb-3">🍽️</div>
-            <h3 class="font-semibold text-lg mb-2">Pridėti Maistą</h3>
-            <p class="text-sm text-gray-600">Užregistruokite suvalgytus produktus</p>
+            <h3 class="font-semibold text-lg mb-2 text-gray-900">Pridėti Maistą</h3>
+            <p class="text-sm text-gray-700 mb-4">Užregistruokite suvalgytus produktus</p>
             <UButton color="primary" class="mt-4" block>
               Pradėti
             </UButton>
           </UCard>
 
-          <UCard class="text-center hover:shadow-lg transition-shadow cursor-pointer" @click="navigateTo('/symptoms')">
+          <UCard class="text-center hover:shadow-lg transition-shadow cursor-pointer bg-white" @click="navigateTo('/symptoms')">
             <div class="text-4xl mb-3">🩺</div>
-            <h3 class="font-semibold text-lg mb-2">Pridėti Simptomą</h3>
-            <p class="text-sm text-gray-600">Fiksuokite nepageidaujamus simptomus</p>
+            <h3 class="font-semibold text-lg mb-2 text-gray-900">Pridėti Simptomą</h3>
+            <p class="text-sm text-gray-700 mb-4">Fiksuokite nepageidaujamus simptomus</p>
             <UButton color="primary" class="mt-4" block>
               Pradėti
             </UButton>
           </UCard>
 
-          <UCard class="text-center hover:shadow-lg transition-shadow cursor-pointer" @click="navigateTo('/diary')">
+          <UCard class="text-center hover:shadow-lg transition-shadow cursor-pointer bg-white" @click="navigateTo('/diary')">
             <div class="text-4xl mb-3">📖</div>
-            <h3 class="font-semibold text-lg mb-2">Peržiūrėti Dienoraštį</h3>
-            <p class="text-sm text-gray-600">Analizuokite savo įrašus</p>
+            <h3 class="font-semibold text-lg mb-2 text-gray-900">Peržiūrėti Dienoraštį</h3>
+            <p class="text-sm text-gray-700 mb-4">Analizuokite savo įrašus</p>
             <UButton color="primary" class="mt-4" block>
               Atidaryti
             </UButton>

@@ -8,9 +8,9 @@
           </NuxtLink>
         </div>
 
-        <UCard>
+        <UCard class="bg-white">
           <template #header>
-            <h1 class="text-3xl font-bold">🍽️ Pridėti Maisto Įrašą</h1>
+            <h1 class="text-3xl font-bold text-gray-900">🍽️ Pridėti Maisto Įrašą</h1>
           </template>
 
           <form @submit.prevent="submitForm" class="space-y-4">
@@ -46,15 +46,15 @@
         </UCard>
 
         <div v-if="recentEntries.length > 0" class="mt-8">
-          <h2 class="text-2xl font-bold mb-4">Naujausi Įrašai</h2>
+          <h2 class="text-2xl font-bold mb-4 text-gray-900">Naujausi Įrašai</h2>
           <div class="space-y-3">
-            <UCard v-for="entry in recentEntries" :key="entry.id">
+            <UCard v-for="entry in recentEntries" :key="entry.id" class="bg-white">
               <div class="flex justify-between items-start">
                 <div class="flex-1">
-                  <h3 class="font-semibold text-lg">{{ entry.name }}</h3>
-                  <p class="text-sm text-gray-600">{{ entry.date }} {{ entry.time }}</p>
-                  <p v-if="entry.quantity" class="text-sm text-gray-700 mt-1">{{ entry.quantity }}</p>
-                  <p v-if="entry.notes" class="text-sm text-gray-600 mt-2">{{ entry.notes }}</p>
+                  <h3 class="font-semibold text-lg text-gray-900">{{ entry.name }}</h3>
+                  <p class="text-sm text-gray-700">{{ entry.date }} {{ entry.time }}</p>
+                  <p v-if="entry.quantity" class="text-sm text-gray-800 mt-1">{{ entry.quantity }}</p>
+                  <p v-if="entry.notes" class="text-sm text-gray-700 mt-2">{{ entry.notes }}</p>
                 </div>
                 <UButton
                   icon="i-heroicons-trash"
