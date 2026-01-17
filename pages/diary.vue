@@ -70,7 +70,7 @@
                           </p>
                         </div>
                         <button
-                          @click="deleteFoodEntry(entry.id)"
+                          @click="handleDeleteFoodEntry(entry.id)"
                           class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
                         >
                           <span class="text-xl">🗑️</span>
@@ -106,7 +106,7 @@
                           </div>
                         </div>
                         <button
-                          @click="deleteSymptomEntry(entry.id)"
+                          @click="handleDeleteSymptomEntry(entry.id)"
                           class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-all"
                         >
                           <span class="text-xl">🗑️</span>
@@ -226,6 +226,19 @@ const getSymptomLabel = (type: SymptomType) => {
 
 const getFoodName = (foodId: string) => {
   return foodEntries.value.find(f => f.id === foodId)?.name || 'Nežinomas produktas'
+}
+
+// Wrapper functions with confirmation dialogs
+const handleDeleteFoodEntry = (id: string) => {
+  if (confirm('Ar tikrai norite ištrinti šį maisto įrašą?')) {
+    deleteFoodEntry(id)
+  }
+}
+
+const handleDeleteSymptomEntry = (id: string) => {
+  if (confirm('Ar tikrai norite ištrinti šį simptomo įrašą?')) {
+    deleteSymptomEntry(id)
+  }
 }
 
 onMounted(() => {
